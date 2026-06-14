@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>愁緒入墨 - 老前輩心情掛號處與解籤所</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: #f4f1ea;
+            color: #2c2c2c;
+        }
+        /* 水墨暈染與復古效果 */
+        .ink-bg {
+            background: radial-gradient(circle, rgba(244,241,234,1) 60%, rgba(200,195,180,1) 100%);
+        }
+        .ink-drop {
+            animation: inkBleed 3s ease-out forwards;
+        }
+        @keyframes inkBleed {
+            0% { filter: blur(10px); opacity: 0; transform: scale(0.8); }
+            100% { filter: blur(0px); opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="ink-bg min-h-screen flex flex-col justify-between p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto w-full mb-6 bg-stone-800 text-stone-300 rounded-lg p-2 flex justify-around shadow-md">
+        <button onclick="switchView('entrance-view')" id="btn-nav-entrance" class="flex-1 py-2 text-center font-bold bg-stone-700 text-white rounded shadow-inner">一、入口處：心情掛號處</button>
+        <button onclick="switchView('exit-view')" id="btn-nav-exit" class="flex-1 py-2 text-center font-bold hover:text-white transition">二、出口處：老前輩解籤所</button>
+    </div>
+
+    <main class="max-w-4xl mx-auto w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-10 flex-grow border border-stone-300">
+        
+        <div id="entrance-view" class="ink-drop space-y-6">
+            <div id="welcome-screen" class="text-center py-12 space-y-6">
+                <h1 class="text-4xl md:text-5xl font-bold tracking-widest text-stone-800">愁緒入墨</h1>
+                <p class="text-stone-600 max-w-md mx-auto leading-relaxed">遊客在進入充滿「無聲劇場」感的高挑展廳前，請先在此處進行心境的診斷，將您的愁緒化為水墨。</p>
+                <div class="pt-8">
+                    <button onclick="startQuiz()" class="bg-red-800 hover:bg-red-900 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg transform active:scale-95 transition border-4 border-stone-200">
+                        ［ 蓋印章進入測驗 ］
+                    </button>
+                </div>
+            </div>
+
+            <div id="quiz-screen" class="hidden space-y-6">
+                <div class="border-b border-stone-300 pb-4">
+                    <h2 class="text-2xl font-bold text-stone-800">老前輩心理評估（BSRS-5 文學轉譯版）</h2>
+                    <p class="text-sm text-stone-500 mt-1">請根據最近一星期的真實感受複選最適切的程度。</p>
+                </div>
+                
+                <form id="quiz-form" class="space-y-8">
+                    <div class="space-y-3">
+                        <label class="block font-bold text-lg text-stone-700">1. 失眠：最近是否像蘇軾貶官時，對著大江東去感到輾轉難眠？</label>
+                        <div class="grid grid-cols-5 gap-2 text-center text-sm">
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q1" value="0" required class="block mx-auto mb-1">完全沒有</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q1" value="1" class="block mx-auto mb-1">輕微</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q1" value="2" class="block mx-auto mb-1">中等</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q1" value="3" class="block mx-auto mb-1">厲害</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q1" value="4" class="block mx-auto mb-1">非常厲害</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block font-bold text-lg text-stone-700">2. 焦慮：想到未來，是否感到心神不寧，像李唐在動盪中尋求安定？</label>
+                        <div class="grid grid-cols-5 gap-2 text-center text-sm">
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q2" value="0" required class="block mx-auto mb-1">完全沒有</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q2" value="1" class="block mx-auto mb-1">輕微</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q2" value="2" class="block mx-auto mb-1">中等</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q2" value="3" class="block mx-auto mb-1">厲害</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q2" value="4" class="block mx-auto mb-1">非常厲害</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block font-bold text-lg text-stone-700">3. 憤怒：對於現狀，你是否感到悲憤，如顏真卿筆觸下的憤怒與慟？</label>
+                        <div class="grid grid-cols-5 gap-2 text-center text-sm">
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q3" value="0" required class="block mx-auto mb-1">完全沒有</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q3" value="1" class="block mx-auto mb-1">輕微</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q3" value="2" class="block mx-auto mb-1">中等</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q3" value="3" class="block mx-auto mb-1">厲害</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q3" value="4" class="block mx-auto mb-1">非常厲害</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block font-bold text-lg text-stone-700">4. 低落：是否覺得前途渺茫，像隱遁山林、懷才不遇的古代畫家？</label>
+                        <div class="grid grid-cols-5 gap-2 text-center text-sm">
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q4" value="0" required class="block mx-auto mb-1">完全沒有</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q4" value="1" class="block mx-auto mb-1">輕微</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q4" value="2" class="block mx-auto mb-1">中等</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q4" value="3" class="block mx-auto mb-1">厲害</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q4" value="4" class="block mx-auto mb-1">非常厲害</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block font-bold text-lg text-stone-700">5. 自卑：是否常覺自己如那隻微小的『核舟』，在時代巨浪中顯得渺小？</label>
+                        <div class="grid grid-cols-5 gap-2 text-center text-sm">
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q5" value="0" required class="block mx-auto mb-1">完全沒有</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q5" value="1" class="block mx-auto mb-1">輕微</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q5" value="2" class="block mx-auto mb-1">中等</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q5" value="3" class="block mx-auto mb-1">厲害</label>
+                            <label class="border p-3 rounded cursor-pointer hover:bg-stone-100"><input type="radio" name="q5" value="4" class="block mx-auto mb-1">非常厲害</label>
+                        </div>
+                    </div>
+
+                    <div class="text-center pt-4">
+                        <button type="button" onclick="submitQuiz()" class="bg-stone-800 hover:bg-stone-900 text-white px-8 py-3 rounded font-bold shadow transition">提交診斷，生成掛號單</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="ticket-screen" class="hidden text-center space-y-6 py-6 border-2 border-dashed border-stone-400 rounded-lg p-6 bg-stone-50">
+                <h2 class="text-3xl font-bold text-stone-800 tracking-wider">老前輩掛號單</h2>
+                <p class="text-stone-500">您的個人心理路徑已與大清/宋代/唐代庫房連線...</p>
+                
+                <div class="bg-white p-4 inline-block shadow-md rounded border border-stone-200">
+                    <div id="qrcode" class="mx-auto"></div>
+                </div>
+                
+                <div class="text-sm space-y-1 text-stone-600">
+                    <p>唯一識別碼 (UUID)：<span id="display-uuid" class="font-mono font-bold text-red-800"></span></p>
+                    <p>心理愁緒指數：<span id="display-score" class="font-bold"></span> 分</p>
+                </div>
+                
+                <div class="bg-amber-50 border border-amber-200 text-amber-900 p-3 rounded max-w-md mx-auto text-sm font-bold">
+                    📌 請截圖保存此畫面，至出口「解籤所」憑此 QR Code 或輸入識別碼領取老前輩處方箋。
+                </div>
+            </div>
+
+            <p class="text-xs text-center text-stone-400 mt-12 border-t border-stone-200 pt-4">
+                * 本測驗非準確醫療指南，僅作為藝術策展互動體驗，如有心理健康需求，請務必尋求專業醫療或心理諮商協助。
+            </p>
+        </div>
+
+
+        <div id="exit-view" class="hidden ink-drop space-y-6">
+            <div class="text-center border-b border-stone-300 pb-4">
+                <h2 class="text-3xl font-bold text-stone-800">老前輩解籤所</h2>
+                <p class="text-stone-600 mt-1">故宮 AI 智慧博物館 · 沉浸式數位展 3.0 技術</p>
+            </div>
+
+            <div id="scan-screen" class="space-y-6 max-w-md mx-auto py-8">
+                <div class="space-y-2">
+                    <label class="block font-bold text-stone-700">請出示您的掛號單 UUID 進行解籤：</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="input-uuid" placeholder="請輸入或黏貼 UUID 碼" class="flex-grow border border-stone-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-stone-500 bg-white">
+                        <button onclick="mockScan()" class="bg-stone-800 hover:bg-stone-900 text-white px-5 py-3 rounded font-bold transition">讀取數據</button>
+                    </div>
+                    <p class="text-xs text-stone-400">（提示：若您剛才在入口做過測試，系統會自動預填；您也可以自由輸入任意文字體驗）</p>
+                </div>
+            </div>
+
+            <div id="interactive-screen" class="hidden space-y-6 text-center">
+                <div id="ambient-box" class="p-8 rounded-xl border transition-all duration-1000 ease-in-out">
+                    <h3 id="ambient-status" class="text-xl font-bold mb-4"></h3>
+                    <p id="ambient-desc" class="text-stone-600 mb-6"></p>
+                    
+                    <div class="border-2 border-stone-300 bg-stone-100 rounded-lg p-6 max-w-sm mx-auto space-y-4">
+                        <p class="text-sm font-bold text-stone-500">【數位體感偵測區】</p>
+                        <p class="text-stone-700 text-sm">請站在螢幕前，對著相機擺出指定儀式手勢：</p>
+                        <div class="flex justify-center gap-4">
+                            <button onclick="triggerGesture('天圓地方')" class="bg-white hover:bg-amber-50 border border-stone-400 px-4 py-3 rounded shadow-sm text-sm font-bold">擺出「天圓地方」</button>
+                            <button onclick="triggerGesture('撥開雲霧')" class="bg-white hover:bg-amber-50 border border-stone-400 px-4 py-3 rounded shadow-sm text-sm font-bold">做出「撥開雲霧」</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="prescription-screen" class="hidden space-y-6">
+                <hr class="border-stone-300 my-6">
+                <div class="bg-amber-50/50 border-2 border-amber-900/20 rounded-xl p-6 md:p-8 space-y-6 shadow-inner max-w-xl mx-auto">
+                    <div class="text-center space-y-2">
+                        <span class="text-xs bg-amber-900 text-white px-2 py-1 rounded font-bold tracking-widest">故宮 AI 智慧博物館 數位處方箋</span>
+                        <h4 class="text-3xl font-bold text-stone-800 mt-2" id="rx-philosopher"></h4>
+                        <p class="text-stone-500 italic text-sm" id="rx-quote"></p>
+                    </div>
+
+                    <div class="bg-white/80 p-5 rounded-lg border border-stone-200 shadow-sm space-y-3">
+                        <h5 class="font-bold text-stone-800 border-b pb-1">📜 老前輩的跨時空對話：</h5>
+                        <p class="text-stone-700 leading-relaxed text-justify" id="rx-content"></p>
+                    </div>
+
+                    <div class="bg-stone-800 text-stone-200 p-4 rounded-lg text-xs space-y-2">
+                        <p class="font-bold border-b border-stone-600 pb-1">⚠️ 策展倫理與隱私聲明</p>
+                        <p>1. 本處方箋由 AI 字畫語言資訊庫根據您的情緒座標動態生成，非正式醫療診斷說明。若您深感困擾，請善用衛生福利部安心專線 <span class="text-amber-400 font-bold">1925</span>（24小時免費）。</p>
+                        <p>2. 隱私聲明：本系統採用匿名識別機制，您的 UUID 及情緒數據將於展覽結束後立即銷毀，絕不留存。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center text-xs text-stone-500 mt-6 max-w-4xl mx-auto w-full">
+        國立故宮博物院「愁緒入墨」特展特製互動模組 © 2026
+    </footer>
+
+    <script>
+        // 全域變數儲存當前使用者的資料（模擬資料庫後端）
+        let currentUserData = {
+            uuid: "",
+            score: 0
+        };
+
+        // 切換入口與出口畫面
+        function switchView(viewId) {
+            document.getElementById('entrance-view').classList.add('hidden');
+            document.getElementById('exit-view').classList.add('hidden');
+            document.getElementById('btn-nav-entrance').className = "flex-1 py-2 text-center font-bold hover:text-white transition";
+            document.getElementById('btn-nav-exit').className = "flex-1 py-2 text-center font-bold hover:text-white transition";
+
+            document.getElementById(viewId).classList.remove('hidden');
+            if(viewId === 'entrance-view') {
+                document.getElementById('btn-nav-entrance').className = "flex-1 py-2 text-center font-bold bg-stone-700 text-white rounded shadow-inner";
+            } else {
+                document.getElementById('btn-nav-exit').className = "flex-1 py-2 text-center font-bold bg-stone-700 text-white rounded shadow-inner";
+                // 模擬自動填入剛剛生成的 UUID
+                if(currentUserData.uuid) {
+                    document.getElementById('input-uuid').value = currentUserData.uuid;
+                }
+            }
+        }
+
+        // 入口處：點擊「蓋印章」開始測驗
+        function startQuiz() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+        }
+
+        // 工具函數：生成隨機 UUID
+        function generateUUID() {
+            return 'xx-xxxx-4xxx-yxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16).toUpperCase();
+            });
+        }
+
+        // 提交 BSRS-5 測驗
+        function submitQuiz() {
+            const form = document.getElementById('quiz-form');
+            if(!form.checkValidity()) {
+                alert("請填寫所有心境評估題目，好讓老前輩為您把脈。");
+                return;
+            }
+
+            // 計算分數 (0 - 20分)
+            let totalScore = 0;
+            for(let i = 1; i <= 5; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) totalScore += parseInt(selected.value);
+            }
+
+            // 生成並綁定匿名識別碼
+            currentUserData.uuid = "NPM-" + generateUUID();
+            currentUserData.score = totalScore;
+
+            // 渲染前端資料
+            document.getElementById('display-uuid').innerText = currentUserData.uuid;
+            document.getElementById('display-score').innerText = totalScore;
+
+            // 產生 QR Code
+            document.getElementById('qrcode').innerHTML = ""; // 清空舊的
+            new QRCode(document.getElementById("qrcode"), {
+                text: currentUserData.uuid,
+                width: 160,
+                height: 160,
+                colorDark : "#1c1917",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // 切換畫面
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('ticket-screen').classList.remove('hidden');
+        }
+
+        // 出口處：模擬掃描 QR Code / 讀取 UUID 數據
+        function mockScan() {
+            const typedUuid = document.getElementById('input-uuid').value.trim();
+            if(!typedUuid) {
+                alert("請輸入 UUID 碼或從入口處產出掛號單。");
+                return;
+            }
+
+            // 如果使用者直接在出口輸入任意碼，我們隨機賦予一個分數讓其能體驗
+            if(typedUuid !== currentUserData.uuid) {
+                currentUserData.uuid = typedUuid;
+                currentUserData.score = Math.floor(Math.random() * 21); // 隨機 0-20 分
+            }
+
+            // 觸發「感應反饋」：根據初始分數調整環境色調與氛圍
+            const ambientBox = document.getElementById('ambient-box');
+            const ambientStatus = document.getElementById('ambient-status');
+            const ambientDesc = document.getElementById('ambient-desc');
+
+            document.getElementById('interactive-screen').classList.remove('hidden');
+            document.getElementById('prescription-screen').classList.add('hidden'); // 先隱藏處方
+
+            if(currentUserData.score >= 10) {
+                // 高分組（高焦慮/悲慟）-> 轉為溫暖、穩定的色調，給予關懷
+                ambientBox.className = "p-8 rounded-xl border border-amber-300 bg-amber-50/70 text-amber-900 transition-all duration-1000 ease-in-out shadow-md";
+                ambientStatus.innerText = "🔮 偵測到深沉愁緒：系統環境已調整為【煦暖和風色調】";
+                ambientDesc.innerText = "古人感知到您心中的激盪與動盪，神情已轉為關懷傾聽。請在下方進行體感儀式，凝聚古人智慧詩籤。";
+            } else {
+                // 低分組（從容組）-> 呈現明亮清新的山水美學
+                ambientBox.className = "p-8 rounded-xl border border-teal-200 bg-teal-50/50 text-teal-900 transition-all duration-1000 ease-in-out shadow-sm";
+                ambientStatus.innerText = "🍃 偵測到清朗心境：系統環境已調整為【青綠山水美學色調】";
+                ambientDesc.innerText = "您當前的狀態安祥從容。請在下方伸出雙手，藉由水墨波動，開啟與歷史名家的精神共振。";
+            }
+        }
+
+        // 模擬體感手勢互動，並根據分數分流對應古人生成客製化籤文
+        function triggerGesture(gestureName) {
+            alert(`[體感偵測] 成功辨識手勢：${gestureName}！數位墨跡正在大螢幕隨手勢流動，匯聚成詩籤...`);
+            
+            const score = currentUserData.score;
+            let philosopher = "";
+            let quote = "";
+            let content = "";
+
+            // AI 客製化分流邏輯
+            if (score >= 15) {
+                // 極度悲慟/憤怒維度高 -> 顏真卿
+                philosopher = "唐代名家 · 顏真卿";
+                quote = "「維乾元元年，歲次戊戌... 賊臣不救，孤城圍逼...」——《祭姪文稿》";
+                content = `偵測到您心中巨大的悲痛或對現狀的憤怒（愁緒指數 ${score} 分）。當年，我面對安史之亂、痛失至親姪子顏季明時，悲憤交加，在極度痛苦中寫下了《祭姪文稿》。那時的我筆法全亂、塗改無數，根本顧不得什麼書法法度。但我用這斑駁的墨跡告訴你：人生最痛苦的時刻，不完美的真實反而最具力量。接納你的脆弱與憤怒，那正是你堅守正義與真情的證明。`;
+            } else if (score >= 10 && score < 15) {
+                // 面臨職場/環境挫敗 -> 蘇軾
+                philosopher = "宋代文豪 · 蘇軾";
+                quote = "「回首向來蕭瑟處，歸去，也無風雨也無晴。」——《定風波》";
+                content = `看來未來的動盪與當前的難眠正困擾著你（愁緒指數 ${score} 分）。當年我被貶官到黃州，人人以為我完了。但我卻在沙湖道上迎風頂雨，寫下了這首詞。職場的挫敗、生活的落魄，不過是歷史長河裡的一場陣雨。莫聽穿林打葉聲，何妨吟嘯且徐行？轉個念，當你看透了這些起伏，回頭望去，便會發現「也無風雨也無晴」。}`;
+            } else if (score >= 5 && score < 10) {
+                // 自我價值低落者 -> 陸游
+                philosopher = "南宋詩人 · 陸游";
+                quote = "「零落成泥碾作塵，只有香如故。」——《卜算子·詠梅》";
+                content = `你是否正覺得自己像大浪中的核舟，渺小且懷才不遇呢（愁緒指數 ${score} 分）？我這一生都在為了收復中原奔走，卻屢遭排擠、晚年隱遁山林。但我從未後悔。如同那驛外斷橋邊的梅花，縱然零落成泥、被車輪碾作塵土，那股幽香依然如故。不要看輕自己，世界的巨浪再大，只要你堅守本心、保持高潔的靈魂，你就永遠不可被戰勝。`;
+            } else {
+                // 從容組/身分變遷焦慮者 -> 溥儀
+                philosopher = "近代歷史人物 · 溥儀";
+                quote = "「從紫禁城的皇帝到北京植物園的園丁，我才真正找到了平安。」";
+                content = `你的心境相當從容，或正站在人生劇烈轉折的十字路口（愁緒指數 ${score} 分）。我曾是這世上身份最尊貴、卻也是最不自由的人。歷經時代巨變，當我脫下龍袍、拿起水鏟，成為一名自食其力的園丁時，我才明白真正的富足不是權位。轉身之後，平凡也有平安。好好享受你此刻的從容，靜觀花開花落，便是最好的處方。`;
+            }
+
+            // 渲染處方箋
+            document.getElementById('rx-philosopher').innerText = philosopher;
+            document.getElementById('rx-quote').innerText = quote;
+            document.getElementById('rx-content').innerText = content;
+
+            // 顯示處方箋畫面並平滑滾動到該區域
+            document.getElementById('prescription-screen').classList.remove('hidden');
+            document.getElementById('prescription-screen').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
