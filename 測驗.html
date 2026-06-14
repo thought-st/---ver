@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>愁緒入墨：老前輩跨時空掛號單</title>
+    <style>
+        :root {
+            --ink-black: #1a1a1a;
+            --paper-white: #fdfcf8;
+            --cinnabar-red: #b03131;
+            --grey-text: #555555;
+            --border-color: #d1c7b7;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "PingFang TC", "Microsoft JhengHei", serif;
+            background-color: var(--paper-white);
+            color: var(--ink-black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 水墨背景裝飾 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 90% 10%, rgba(26, 26, 26, 0.03) 0%, transparent 40%),
+                              radial-gradient(circle at 10% 90%, rgba(176, 49, 49, 0.02) 0%, transparent 30%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 畫面切換控制 */
+        .screen {
+            display: none;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 標題風格 */
+        h1 {
+            font-size: 1.8rem;
+            color: var(--ink-black);
+            text-align: center;
+            border-bottom: 2px solid var(--cinnabar-red);
+            display: inline-block;
+            margin: 0 auto 1.5rem;
+            padding-bottom: 5px;
+        }
+
+        .title-wrapper {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* 免責聲明區塊 */
+        .disclaimer-box {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+        }
+
+        .disclaimer-box h3 {
+            margin-top: 0;
+            color: var(--cinnabar-red);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .disclaimer-item {
+            margin-bottom: 12px;
+            color: var(--grey-text);
+            text-align: justify;
+        }
+
+        /* 表單元素 */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input {
+            margin-top: 5px;
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--cinnabar-red);
+        }
+
+        .btn {
+            background-color: var(--ink-black);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            width: 100%;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-cinnabar {
+            background-color: var(--cinnabar-red);
+        }
+
+        /* 測驗頁面 */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #eee;
+            margin-bottom: 30px;
+            border-radius: 2px;
+        }
+
+        .progress-inner {
+            height: 100%;
+            background: var(--cinnabar-red);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question-card {
+            margin-bottom: 30px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 25px;
+            min-height: 80px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-item:active {
+            background-color: #f0f0f0;
+        }
+
+        .option-item.selected {
+            border-color: var(--cinnabar-red);
+            background-color: rgba(176, 49, 49, 0.05);
+            color: var(--cinnabar-red);
+            font-weight: bold;
+        }
+
+        /* 結果頁面 */
+        .result-card {
+            text-align: center;
+            padding: 30px 20px;
+            border: 2px solid var(--ink-black);
+            background: white;
+            position: relative;
+        }
+
+        .result-status {
+            font-size: 2rem;
+            color: var(--cinnabar-red);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .result-description {
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            color: var(--grey-text);
+        }
+
+        /* 特別警告框 */
+        .emergency-box {
+            border: 2px solid var(--cinnabar-red);
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            background-color: rgba(176, 49, 49, 0.05);
+        }
+
+        .emergency-box h4 {
+            margin: 0 0 10px 0;
+            color: var(--cinnabar-red);
+        }
+
+        .id-badge {
+            margin-top: 40px;
+            padding: 15px;
+            background: #f4f4f4;
+            border-radius: 8px;
+            border: 1px dashed #aaa;
+        }
+
+        .id-number {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+            color: var(--ink-black);
+        }
+
+        .screenshot-tip {
+            font-size: 0.85rem;
+            color: var(--grey-text);
+            margin-top: 10px;
+        }
+
+        .footer-logo {
+            text-align: center;
+            margin-top: auto;
+            padding: 40px 0 20px;
+            font-size: 0.8rem;
+            color: #aaa;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 畫面一：歡迎與授權頁 -->
+    <section id="screen-welcome" class="screen active">
+        <div class="title-wrapper">
+            <h1>愁緒入墨</h1>
+            <p style="margin-top:-10px; font-style: italic;">老前輩跨時空掛號單</p>
+        </div>
+
+        <div class="disclaimer-box">
+            <h3>⚠️ 專業免責聲明</h3>
+            <div class="disclaimer-item">本測驗僅供展覽互動與自我心境檢測參考，此為測試非準確醫療指南。如有情緒困擾需求，應尋求專業心理諮商或精神醫療協助。</div>
+            
+            <h3>隱私保護</h3>
+            <div class="disclaimer-item">本測驗採匿名收集，不收集任何個人可識別資訊（如姓名、電話、地址）。</div>
+            
+            <h3>資料銷毀</h3>
+            <div class="disclaimer-item">所得數據僅供本次展覽互動使用，並將於展覽結束後立即銷毀，確保個人隱私不受侵犯。</div>
+        </div>
+
+        <label class="checkbox-wrapper">
+            <input type="checkbox" id="agree-checkbox">
+            <span>我已閱讀並同意上述聲明</span>
+        </label>
+
+        <button id="start-btn" class="btn" disabled>開始掛號</button>
+    </section>
+
+    <!-- 畫面二：測驗進行頁 -->
+    <section id="screen-quiz" class="screen">
+        <div class="progress-bar">
+            <div id="progress-inner" class="progress-inner"></div>
+        </div>
+        
+        <div class="question-card">
+            <div id="question-text" class="question-text">載入中...</div>
+            <div class="options-group" id="options-container">
+                <!-- 選項將由 JS 動態生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 畫面三：測驗結果頁 -->
+    <section id="screen-result" class="screen">
+        <div class="title-wrapper">
+            <p>— 診斷結果 —</p>
+            <div id="result-status" class="result-status">身心從容</div>
+        </div>
+
+        <div class="result-card">
+            <div id="result-description" class="result-description"></div>
+            
+            <div id="emergency-area" style="display: none;">
+                <div class="emergency-box">
+                    <h4>💡 溫馨特別提醒</h4>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;">此刻的你，或許正承受著極大的重量。請給自己一個被傾聽的機會，專業的陪伴一直都在：</p>
+                    <ul style="font-size: 0.9rem; padding-left: 20px; margin: 0;">
+                        <li>安心專線：1925（依舊愛我）</li>
+                        <li>生命線專線：1995</li>
+                        <li>張老師專線：1980</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="id-badge">
+                <span style="font-size: 0.9rem;">匿名唯一識別碼</span>
+                <span id="display-id" class="id-number">NPM-2026-XXXXX</span>
+                <p class="screenshot-tip">請截圖保存此 ID，並於出口「老前輩解籤所」出示，以換取您的專屬心靈處方箋。</p>
+            </div>
+        </div>
+
+        <button class="btn btn-cinnabar" style="margin-top: 30px;" onclick="window.location.reload()">重新檢測</button>
+    </section>
+
+    <footer class="footer-logo">
+        NATIONAL PALACE MUSEUM 2026
+    </footer>
+</div>
+
+<script>
+    // 題目資料
+    const questions = [
+        {
+            text: "1. [睡眠困難] 最近是否像蘇軾貶官黃州時那樣，在深夜裡對著大江東去，感到輾轉難眠？",
+            dimension: "sleep"
+        },
+        {
+            text: "2. [緊張不安] 想到未來，是否感到心神不寧，像李唐在動盪政局中尋求安定？",
+            dimension: "anxiety"
+        },
+        {
+            text: "3. [容易動怒] 對於現狀，你是否感到悲憤或苦惱，如顏真卿筆觸下的憤怒與慟？",
+            dimension: "anger"
+        },
+        {
+            text: "4. [心情低落] 是否感覺前途渺茫，心裡悶悶的，像隱遁山林、懷才不遇的古代畫家？",
+            dimension: "depression"
+        },
+        {
+            text: "5. [覺得比不上別人] 在追求成功的路上，是否常覺得自己像那隻微小的「核舟」，不如他人？",
+            dimension: "inferiority"
+        },
+        {
+            text: "6. [特別提醒] 是否有種萬念俱灰、想放棄一切的念頭？",
+            dimension: "suicide_risk"
+        }
+    ];
+
+    const options = [
+        { label: "完全沒有", value: 0 },
+        { label: "輕微", value: 1 },
+        { label: "中等程度", value: 2 },
+        { label: "厲害", value: 3 },
+        { label: "非常厲害", value: 4 }
+    ];
+
+    let currentStep = 0;
+    let scores = [];
+
+    // DOM 元素
+    const agreeCheckbox = document.getElementById('agree-checkbox');
+    const startBtn = document.getElementById('start-btn');
+    const screens = document.querySelectorAll('.screen');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const progressInner = document.getElementById('progress-inner');
+
+    // 初始化：同意聲明邏輯
+    agreeCheckbox.addEventListener('change', (e) => {
+        startBtn.disabled = !e.target.checked;
+    });
+
+    startBtn.addEventListener('click', () => {
+        showScreen('screen-quiz');
+        renderQuestion();
+    });
+
+    function showScreen(screenId) {
+        screens.forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function renderQuestion() {
+        const q = questions[currentStep];
+        questionText.innerText = q.text;
+        progressInner.style.width = `${((currentStep) / questions.length) * 100}%`;
+        
+        optionsContainer.innerHTML = '';
+        options.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'option-item';
+            div.innerHTML = `<span>${opt.label}</span><span style="opacity:0.3; font-size:0.8rem;">${opt.value}分</span>`;
+            div.onclick = () => selectOption(opt.value);
+            optionsContainer.appendChild(div);
+        });
+    }
+
+    function selectOption(val) {
+        scores.push(val);
+        
+        if (currentStep < questions.length - 1) {
+            currentStep++;
+            // 增加一點點延遲讓使用者看到點擊效果
+            setTimeout(renderQuestion, 200);
+        } else {
+            progressInner.style.width = '100%';
+            setTimeout(showResult, 400);
+        }
+    }
+
+    function generateID() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 排除易混淆字元
+        let result = '';
+        for (let i = 0; i < 5; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return `NPM-2026-${result}`;
+    }
+
+    function showResult() {
+        const totalScore = scores.reduce((a, b) => a + b, 0);
+        const suicideScore = scores[5]; // 第6題的分數
+        
+        let status = "";
+        let desc = "";
+
+        if (totalScore <= 5) {
+            status = "【身心從容】";
+            desc = "你正如《富春山居圖》中的遠山，心境曠達而悠遠。目前的你狀態穩定，適合帶著這份從容，細細品味古人墨跡間的生命氣息。";
+        } else if (totalScore <= 9) {
+            status = "【輕度思慮】";
+            desc = "心頭略有微雲遮月，正如文人筆下的淡淡哀愁。不妨走進展場，看看老前輩們如何將情緒轉化為藝術，或許能在此找到共鳴與排解。";
+        } else if (totalScore <= 14) {
+            status = "【中度焦慮】";
+            desc = "你的心靈正如驚濤駭浪中的孤舟，感到些許吃力。這裡的每一幅作品，都是前人掙扎後留下的痕跡。請允許自己在此稍作停留，讓墨色撫平你的焦躁。";
+        } else {
+            status = "【高度緊繃】";
+            desc = "此刻的你，心境正如濃墨化不開，承載了太多的壓力。請記得，即便在最深沉的墨色中，仍有紙白的空間可以呼吸。我們非常關心你的狀態。";
+        }
+
+        document.getElementById('result-status').innerText = status;
+        document.getElementById('result-description').innerText = desc;
+        document.getElementById('display-id').innerText = generateID();
+
+        // 特別觸發邏輯
+        if (suicideScore >= 2) {
+            document.getElementById('emergency-area').style.display = 'block';
+        }
+
+        showScreen('screen-result');
+    }
+</script>
+
+</body>
+</html>
